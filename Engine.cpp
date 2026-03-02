@@ -8,11 +8,9 @@ constexpr int BISHOP_VALUE = 3;
 constexpr int ROOK_VALUE = 5;
 constexpr int QUEEN_VALUE = 9;
 constexpr int INF = 1'000'000'000;
-constexpr int mate = 900'000'000;
+constexpr int MATE = 900'000'000;
 
-
-
-    struct Evaluation
+struct Evaluation
 {
     int eval;
     Move bestMove;
@@ -25,16 +23,16 @@ int evaluate(Board &board)
         // Its the losers turn when its checkmate
         if (board.sideToMove() == Color::WHITE)
         {
-            return -1000000000;
+            return -MATE;
         }
         else
         {
-            return 1000000000;
+            return MATE;
         }
     }
     else if (board.isGameOver().second == GameResult::DRAW)
     {
-        return 0;
+        return -MATE;
     }
 
     int evaluation = 0;
@@ -63,7 +61,7 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
     Movelist moves;
     movegen::legalmoves(moves, board);
 
-    //Sort Moves, putting attacking moves at front
+    // Sort Moves, putting attacking moves at front
     sort(moves.begin(), moves.end(), [&board](const Move &a, const Move &b)
          {
                   bool aCapture = board.isCapture(a);
@@ -80,7 +78,7 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
 
     if (board.sideToMove() == Color::WHITE)
     {
-        evaluation.eval = -1000000000;
+        evaluation.eval = -INF;
 
         for (const auto &move : moves)
         {
@@ -104,7 +102,7 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
 
     if (board.sideToMove() == Color::BLACK)
     {
-        evaluation.eval = 1000000000;
+        evaluation.eval = INF;
 
         for (const auto &move : moves)
         {
@@ -131,16 +129,16 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
     return evaluation;
 }
 
-
-Evalution nega
-
 int main(int argc, char *argv[])
 {
     Board board(argv[1]);
     int depth = std::atoi(argv[2]);
-    Evaluation evaluation = minMax(board, depth, -1000000001, 1000000001);
+    Evaluation evaluation = minMax(board, depth, -INF, INF);
     cout << uci::moveToUci(evaluation.bestMove, false) << endl;
     cout << evaluate(board);
+
+    // Board board("8/8/8/8/8/1k4p1/1r6/K7 w - - 2 58");
+    // cout << (board.isGameOver().second == GameResult::DRAW) << endl;
 
     // Movelist moves;
     // movegen::legalmoves(moves, board);
