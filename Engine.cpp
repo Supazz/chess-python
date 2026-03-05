@@ -10,6 +10,14 @@ constexpr int QUEEN_VALUE = 9;
 constexpr int INF = 1'000'000'000;
 constexpr int MATE = 900'000'000;
 
+constexpr PieceType allPieces[] = {
+    PieceType::PAWN,
+    PieceType::KNIGHT,
+    PieceType::BISHOP,
+    PieceType::ROOK,
+    PieceType::QUEEN,
+    PieceType::KING};
+
 struct Evaluation
 {
     int eval;
@@ -32,7 +40,14 @@ int evaluate(Board &board)
     }
     else if (board.isGameOver().second == GameResult::DRAW)
     {
-        return 0;
+        if (board.sideToMove() == Color::WHITE)
+        {
+            return -MATE + 1;
+        }
+        else
+        {
+            return MATE - 1;
+        }
     }
 
     int evaluation = 0;
@@ -54,7 +69,7 @@ int evaluate(Board &board)
     return whiteCount - blackCount;
 }
 
-Evaluation minMax(Board &board, int depth, int alpha, int beta)
+Evaluation miniMax(Board &board, int depth, int alpha, int beta)
 {
     Evaluation evaluation;
 
@@ -83,7 +98,7 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
         for (const auto &move : moves)
         {
             board.makeMove<true>(move);
-            int eval = minMax(board, depth - 1, alpha, beta).eval;
+            int eval = miniMax(board, depth - 1, alpha, beta).eval;
             board.unmakeMove(move);
             if (eval > evaluation.eval)
             {
@@ -109,7 +124,7 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
 
             board.makeMove<true>(move);
 
-            int eval = minMax(board, depth - 1, alpha, beta).eval;
+            int eval = miniMax(board, depth - 1, alpha, beta).eval;
             board.unmakeMove(move);
             if (eval < evaluation.eval)
             {
@@ -129,13 +144,34 @@ Evaluation minMax(Board &board, int depth, int alpha, int beta)
     return evaluation;
 }
 
+int countPieces(const Board &board) 
+{
+
+    int numPieces = 0;
+    for (PieceType p : allPieces)
+    {
+        numPieces += board.pieces(p).count();
+    }
+    return numPieces;
+}
+
+Evaluation findBestMove(Board &board, int depth)
+
+{
+    if(countPieces(board) <= 7){
+        
+    }
+}
+
 int main(int argc, char *argv[])
+// int main()
 {
     Board board(argv[1]);
     int depth = std::atoi(argv[2]);
-    Evaluation evaluation = minMax(board, depth, -INF, INF);
+    Evaluation evaluation = miniMax(board, depth, -INF, INF);
     cout << uci::moveToUci(evaluation.bestMove, false) << endl;
     cout << evaluation.eval << endl;
+    
 
     // Board board("8/8/8/8/8/1k4p1/1r6/K7 w - - 2 58");
     // cout << (board.isGameOver().second == GameResult::DRAW) << endl;
@@ -147,5 +183,7 @@ int main(int argc, char *argv[])
     // {
     //     std::cout << uci::moveToUci(move) << std::endl;
     // }
+
+
     return 0;
 }
