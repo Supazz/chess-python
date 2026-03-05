@@ -32,7 +32,7 @@ int evaluate(Board &board)
     }
     else if (board.isGameOver().second == GameResult::DRAW)
     {
-        return -MATE;
+        return 0;
     }
 
     int evaluation = 0;
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     int depth = std::atoi(argv[2]);
     Evaluation evaluation = minMax(board, depth, -INF, INF);
     cout << uci::moveToUci(evaluation.bestMove, false) << endl;
-    cout << evaluate(board);
+    cout << evaluation.eval << endl;
 
     // Board board("8/8/8/8/8/1k4p1/1r6/K7 w - - 2 58");
     // cout << (board.isGameOver().second == GameResult::DRAW) << endl;
