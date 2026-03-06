@@ -1,4 +1,7 @@
 #include "chess-library-master/chess-library-master/include/chess.hpp"
+
+
+
 using namespace chess;
 using namespace std;
 
@@ -26,6 +29,8 @@ struct Evaluation
 
 int evaluate(Board &board)
 {
+
+    
     if (board.isGameOver().first == GameResultReason::CHECKMATE)
     {
         // Its the losers turn when its checkmate
@@ -42,11 +47,11 @@ int evaluate(Board &board)
     {
         if (board.sideToMove() == Color::WHITE)
         {
-            return -MATE + 1;
+            return 100;
         }
         else
         {
-            return MATE - 1;
+            return -100;
         }
     }
 
@@ -144,7 +149,7 @@ Evaluation miniMax(Board &board, int depth, int alpha, int beta)
     return evaluation;
 }
 
-int countPieces(const Board &board) 
+int countPieces(const Board &board)
 {
 
     int numPieces = 0;
@@ -158,20 +163,27 @@ int countPieces(const Board &board)
 Evaluation findBestMove(Board &board, int depth)
 
 {
-    if(countPieces(board) <= 7){
-        
-    }
+    // if (countPieces(board) <= 7)
+    // {
+    //     // Move bestMove;
+    //     // int bestDTZ = -1;
+    //     // int wdlResult;
+
+    //     return Evaluation;
+    // }
+
+    // else
+        return miniMax(board, depth, -INF, INF);
 }
 
 int main(int argc, char *argv[])
-// int main()
 {
+
     Board board(argv[1]);
     int depth = std::atoi(argv[2]);
     Evaluation evaluation = miniMax(board, depth, -INF, INF);
     cout << uci::moveToUci(evaluation.bestMove, false) << endl;
     cout << evaluation.eval << endl;
-    
 
     // Board board("8/8/8/8/8/1k4p1/1r6/K7 w - - 2 58");
     // cout << (board.isGameOver().second == GameResult::DRAW) << endl;
@@ -183,7 +195,6 @@ int main(int argc, char *argv[])
     // {
     //     std::cout << uci::moveToUci(move) << std::endl;
     // }
-
 
     return 0;
 }
